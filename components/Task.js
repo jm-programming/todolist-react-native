@@ -1,51 +1,54 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 
-const Task = (props) => {
+const TodoItem = ({ todo, deleteTask, editTask }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [newText, setNewText] = useState(todo.text);
+
   return (
     <View style={styles.item}>
-      <View style={styles.itemLeft}>
-        <View style={styles.square}></View>
-        <Text style={styles.itemText}>{props.text}</Text>
-      </View>
-      <View style={styles.circular}></View>
+      {isEditing ? (
+        <>
+          <TextInput
+            style={styles.input}
+            value={newText}
+            onChangeText={setNewText}
+          />
+          <Button title="Guardar" onPress={() => {
+            editTask(todo.id, newText);
+            setIsEditing(false);
+          }} />
+        </>
+      ) : (
+        <>
+          <Text style={styles.text}>{todo.text}</Text>
+          <Button title="Editar" onPress={() => setIsEditing(true)} />
+        </>
+      )}
+      <Button title="Eliminar" onPress={() => deleteTask(todo.id)} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   item: {
-    backgroundColor: "#FFF",
-    padding: 15,
-    borderRadius: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 20,
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  itemLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    flexWrap: "wrap",
+  text: {
+    flex: 1,
+    fontSize: 16,
   },
-  square: {
-    width: 24,
-    height: 24,
-    backgroundColor: "#55BCF6",
-    opacity: 0.4,
-    borderRadius: 5,
-    marginRight: 15,
-  },
-  itemText: {
-    maxWidth: "80%",
-  },
-  circular: {
-    width: 12,
-    height: 12,
-    borderColor: "#55BCF6",
-    borderWidth: 2,
-    borderRadius: 5,
+  input: {
+    flex: 1,
+    fontSize: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
 });
 
-export default Task;
+export default TodoItem;

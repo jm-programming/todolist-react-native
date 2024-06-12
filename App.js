@@ -1,56 +1,27 @@
-import React from "react";
-import {
-  KeyboardAvoidingView,
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { View, TextInput, Button, FlatList, StyleSheet } from "react-native";
 import Task from "./components/Task";
-import useTaks from "./hooks/useTaks";
+import useTask from "./hooks/useTask";
 
 export default function App() {
-  const { task, taskItems, handleAddTask, completeTask, setTask } = useTaks();
+  const { tasks, text, setText, deleteTask, editTask, handleAddTask } =
+    useTask();
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-        }}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View style={styles.tasksWrapper}>
-          <Text style={styles.sectionTitle}>Today's tasks</Text>
-          <View style={styles.items}>
-            {taskItems.map((item, index) => {
-              return (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => completeTask(index)}
-                >
-                  <Task text={item} />
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </View>
-      </ScrollView>
-      <KeyboardAvoidingView style={styles.writeTaskWrapper}>
-        <TextInput
-          style={styles.input}
-          placeholder={"Write a Task"}
-          value={task}
-          onChangeText={(text) => setTask(text)}
-        />
-        <TouchableOpacity onPress={() => handleAddTask()}>
-          <View style={styles.addWrapper}>
-            <Text style={styles.addText}>+</Text>
-          </View>
-        </TouchableOpacity>
-      </KeyboardAvoidingView>
+      <TextInput
+        style={styles.input}
+        placeholder="Nueva tarea"
+        value={text}
+        onChangeText={setText}
+      />
+      <Button title="Agregar" onPress={handleAddTask} />
+      <FlatList
+        data={tasks}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <Task todo={item} deleteTask={deleteTask} editTask={editTask} />
+        )}
+      />
     </View>
   );
 }
@@ -58,45 +29,13 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#E8EAED",
-  },
-  tasksWrapper: {
-    paddingTop: 80,
+    paddingTop: 50,
     paddingHorizontal: 20,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  items: {
-    marginTop: 30,
-  },
-  writeTaskWrapper: {
-    position: "absolute",
-    bottom: 60,
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-  },
   input: {
-    paddingVertical: 15,
-    paddingHorizontal: 15,
-    backgroundColor: "#FFF",
-    borderRadius: 60,
-    borderColor: "#C0C0C0",
+    padding: 10,
+    borderColor: "#ccc",
     borderWidth: 1,
-    width: 250,
+    marginBottom: 10,
   },
-  addWrapper: {
-    width: 60,
-    height: 60,
-    backgroundColor: "#FFF",
-    borderRadius: 60,
-    justifyContent: "center",
-    alignItems: "center",
-    borderColor: "#C0C0C0",
-    borderWidth: 1,
-  },
-  addText: {},
 });
